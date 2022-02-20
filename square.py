@@ -1,10 +1,19 @@
 from pymavlink import mavutil
 
 
-def check_reached(connection, wp):
+def check_alt_reached(connection, alt):
     msg = connection.recv_match(type='LOCAL_POSITION_NED', blocking=True)
     print(msg)
-    if (abs(msg.x - wp[0]) < 0.5) and (abs(msg.y - wp[1]) < 0.5) and (abs(msg.z - wp[2]) < 0.5):
+    if abs(msg.z - (-alt)) < 1:
+        return 1
+    else:
+        return 0
+
+
+def check_reached(connection):
+    msg = connection.recv_match(type='NAV_CONTROLLER_OUTPUT', blocking=True)
+    print(msg)
+    if (msg.wp_dist < 1):
         return 1
     else:
         return 0
@@ -25,14 +34,16 @@ the_connection.mav.command_long_send(the_connection.target_system, the_connectio
 msg = the_connection.recv_match(type='COMMAND_ACK', blocking=True)
 print(msg)
 
+alt = 10
 the_connection.mav.command_long_send(the_connection.target_system, the_connection.target_component,
-                                     mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 25, 0, 0, 10)
+                                     mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 25, 0, 0, alt)
 
 msg = the_connection.recv_match(type='COMMAND_ACK', blocking=True)
 print(msg)
 
 while 1:
-    if check_reached(the_connection, [0, 0, -10]):
+    if check_alt_reached(the_connection, alt):
+        print("takeoff reached")
         break
 
 
@@ -47,7 +58,7 @@ while wp_num < len(wp_arr):
     the_connection.mav.send(mavutil.mavlink.MAVLink_set_position_target_local_ned_message(10, the_connection.target_system, the_connection.target_component,
                                                                                           mavutil.mavlink.MAV_FRAME_LOCAL_NED, int(0b110111111000), wp_arr[wp_num][0], wp_arr[wp_num][1], wp_arr[wp_num][2], 0, 0, 0, 0, 0, 0, 1.5, 0))
     while 1:
-        if check_reached(the_connection, wp_arr[wp_num]):
+        if check_reached(the_connection):
             break
     wp_num = wp_num + 1
 
