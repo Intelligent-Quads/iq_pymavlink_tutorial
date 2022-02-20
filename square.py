@@ -19,6 +19,16 @@ def check_reached(connection):
         return 0
 
 
+def set_new_wp_ned(connection, wp_ned):
+    the_connection.mav.send(mavutil.mavlink.MAVLink_set_position_target_local_ned_message(10, connection.target_system, connection.target_component,
+                                                                                          mavutil.mavlink.MAV_FRAME_LOCAL_NED, int(0b110111111000), wp_ned[0], wp_ned[1], wp_ned[2], 0, 0, 0, 0, 0, 0, 1.5, 0))
+    while 1:
+        msg = connection.recv_match(
+            type='NAV_CONTROLLER_OUTPUT', blocking=True)
+        if msg.wp_dist > 0:
+            break
+
+
 # Start a connection listening to a UDP port
 the_connection = mavutil.mavlink_connection('udpin:localhost:14551')
 
@@ -54,9 +64,8 @@ wp_arr.append([0, 10, -10])
 wp_arr.append([0, 0, -10])
 
 wp_num = 0
-while wp_num < len(wp_arr):
-    the_connection.mav.send(mavutil.mavlink.MAVLink_set_position_target_local_ned_message(10, the_connection.target_system, the_connection.target_component,
-                                                                                          mavutil.mavlink.MAV_FRAME_LOCAL_NED, int(0b110111111000), wp_arr[wp_num][0], wp_arr[wp_num][1], wp_arr[wp_num][2], 0, 0, 0, 0, 0, 0, 1.5, 0))
+for wp in wp_arr:
+    set_new_wp_ned(the_connection, wp)
     while 1:
         if check_reached(the_connection):
             break
