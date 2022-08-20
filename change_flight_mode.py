@@ -6,7 +6,7 @@ master = mavutil.mavlink_connection('udpin:0.0.0.0:14550')
 master.wait_heartbeat()
 
 # Choose a mode
-mode = 'GUIDED'
+mode = 'FOLLOW'
 
 # Check if mode is available
 if mode not in master.mode_mapping():
