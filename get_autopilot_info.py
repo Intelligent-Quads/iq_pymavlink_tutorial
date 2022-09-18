@@ -10,12 +10,13 @@ connection.wait_heartbeat()
 # get type of autopilot
 msg = connection.recv_match(type='HEARTBEAT', blocking=True, timeout=3)
 autopilot_info = mavutil.mavlink.enums['MAV_AUTOPILOT'][msg.autopilot].description
+print(mavutil.mavlink.enums['MAV_AUTOPILOT'][msg.autopilot].name)
+print(mavutil.mavlink.enums['MAV_TYPE'][msg.type].name)
 
 # ask for software version
 connection.mav.send(mavutil.mavlink.MAVLink_autopilot_version_request_message(
     connection.target_system, connection.target_component))
 msg = connection.recv_match(type='AUTOPILOT_VERSION', blocking=True, timeout=3)
-
 if msg:
     major = str(msg.flight_sw_version >> 24)
     sub = str(msg.flight_sw_version >> 16 & 0xFF)
