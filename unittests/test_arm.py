@@ -4,7 +4,7 @@ import unittest
 from pymavlink import mavutil
 
 # Add the parent directory to the system path
-sys.path.append('..')
+# sys.path.append('..')
 
 from arm import arm
 from sitl_simulator import SITLSimulator
