@@ -5,13 +5,7 @@ from pymavlink import mavutil
 
 class SITLSimulator:
     def __init__(self):
-        if 'IQ_SIM_TOKEN' in os.environ:
-            print("IQ_SIM_TOKEN is available")
-        else:
-            print("IQ_SIM_TOKEN is not available")
         self.token = os.getenv("IQ_SIM_TOKEN")
-        print(self.token)
-        print(len(self.token))
         self.api = iq_sim.iq_sim(self.token)
 
     def start(self):

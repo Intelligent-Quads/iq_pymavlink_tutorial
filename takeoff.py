@@ -44,18 +44,19 @@ def takeoff(mav_connection, takeoff_altitude):
     mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component, mavutil.mavlink.MAV_CMD_DO_SET_MODE,
                                 0, mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, mode_id, 0, 0, 0, 0, 0)
     ack_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
+    print(f"Change Mode ACK:  {ack_msg}")
 
     mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
                                          mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0, 1, 0, 0, 0, 0, 0, 0)
 
     arm_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True)
-    print(arm_msg)
+    print(f"Arm ACK:  {arm_msg}")
 
     mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
                                          mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 0, 0, 0, takeoff_altitude)
 
     takeoff_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True)
-    print(takeoff_msg)
+    print(f"Takeoff ACK:  {takeoff_msg}")
 
     return takeoff_msg.result
 
