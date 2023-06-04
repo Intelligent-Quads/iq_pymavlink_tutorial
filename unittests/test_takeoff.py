@@ -3,7 +3,7 @@ import unittest
 from pymavlink import mavutil
 import time
 # Add the parent directory to the system path
-# sys.path.append('..')
+sys.path.append('..')
 
 from takeoff import takeoff
 from sitl_simulator import SITLSimulator

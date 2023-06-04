@@ -20,5 +20,6 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run test
-      run: |
-        python -m unittest unittests/test_arm.py
+      run: python -m unittest test_arm.py
+      working-directory: unittests
+

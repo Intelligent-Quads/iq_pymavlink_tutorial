@@ -3,7 +3,7 @@ import unittest
 from pymavlink import mavutil
 
 # Add the parent directory to the system path
-# sys.path.append('..')
+sys.path.append('..')
 
 from change_mode import connect_to_sysid, change_mode  
 from sitl_simulator import SITLSimulator
