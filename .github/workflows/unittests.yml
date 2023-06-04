@@ -7,6 +7,7 @@ jobs:
     environment: iq_sim_vars
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         test: ["test_arm", "test_change_mode", "test_takeoff"]
 
