@@ -38,6 +38,7 @@ def change_mode(master, mode):
                                 0, mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, mode_id, 0, 0, 0, 0, 0)
     ack_msg = master.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(ack_msg)
+    return ack_msg.result
 
 
 if __name__ == '__main__':
