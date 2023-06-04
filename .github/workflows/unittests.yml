@@ -22,4 +22,5 @@ jobs:
     - name: Run test
       run: python -m unittest test_arm.py
       working-directory: unittests
-
+      env:
+        IQ_SIM_TOKEN: ${{ secrets.IQ_SIM_TOKEN }}
