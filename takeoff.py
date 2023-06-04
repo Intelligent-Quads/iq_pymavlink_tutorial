@@ -18,7 +18,9 @@ def wait_until_position_aiding(mav_connection):
 
 def ekf_pos_aiding(mav_connection, flags):
     msg = mav_connection.recv_match(type='EKF_STATUS_REPORT', blocking=True, timeout=3)
-    print(msg)
+    if not msg:
+        return 0
+    print(f"from sysid {msg.get_srcSystem()} {msg}")
     ekf_flags = msg.flags
 
     for flag in flags:
@@ -49,13 +51,13 @@ def takeoff(mav_connection, takeoff_altitude):
     mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
                                          mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0, 1, 0, 0, 0, 0, 0, 0)
 
-    arm_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True)
+    arm_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Arm ACK:  {arm_msg}")
 
     mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
                                          mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 0, 0, 0, takeoff_altitude)
 
-    takeoff_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True)
+    takeoff_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Takeoff ACK:  {takeoff_msg}")
 
     return takeoff_msg.result

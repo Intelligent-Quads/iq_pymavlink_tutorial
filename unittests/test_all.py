@@ -18,7 +18,8 @@ class TestAll(unittest.TestCase):
         conn_str = self.simulator.start()
         time.sleep(10)
         self.mav_connection = self.connect_to_sysid(conn_str, 1)
-
+        self.mav_connection.mav.request_data_stream_send(self.mav_connection.target_system, self.mav_connection.target_component,
+                                        mavutil.mavlink.MAV_DATA_STREAM_ALL, 4, 1)
     def tearDown(self):
         print("Stopping simulator")
         self.simulator.stop()
@@ -34,7 +35,7 @@ class TestAll(unittest.TestCase):
         """    
         time_start = time.time()
         while time.time() - time_start < timeout:
-            the_connection = mavutil.mavlink_connection(connection_str)
+            the_connection = mavutil.mavlink_connection(connection_str, autoreconnect=True)
             the_connection.wait_heartbeat()
             print(
                 f"Heartbeat from system system {the_connection.target_system} component {the_connection.target_component}")
