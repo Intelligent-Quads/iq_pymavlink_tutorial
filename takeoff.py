@@ -13,6 +13,7 @@ def wait_until_position_aiding(mav_connection):
     flags = ['EKF_PRED_POS_HORIZ_REL', 'EKF_PRED_POS_HORIZ_REL']
     time_start = time.time()
     while not ekf_pos_aiding(mav_connection, flags) and time.time() - time_start < 120:
+        print(time.time() - time_start)
         continue
     return
 

@@ -10,6 +10,7 @@ from arm import arm
 from sitl_simulator import SITLSimulator
 from change_mode import connect_to_sysid, change_mode  
 from takeoff import takeoff
+from speed_yaw import set_speed, set_yaw
 
 class TestAll(unittest.TestCase):
     def setUp(self):
@@ -58,6 +59,24 @@ class TestAll(unittest.TestCase):
     def test_takeoff(self):
         # Use a takeoff altitude of 10 for the test
         result = takeoff(self.mav_connection, 10)
+        self.assertEqual(result, 0)
+
+    def test_set_speed(self):
+        result = takeoff(self.mav_connection, 10)
+        self.assertEqual(result, 0)
+        time.sleep(1)
+        # Use a speed of 1 for the test
+        result = set_speed(self.mav_connection, 1)
+
+        self.assertEqual(result, 0)
+
+    def test_set_yaw(self):
+        result = takeoff(self.mav_connection, 10)
+        self.assertEqual(result, 0)
+        time.sleep(1)
+
+        # Use a yaw angle of 45 and a yaw rate of 25 for the test
+        result = set_yaw(self.mav_connection, 45, 25)
         self.assertEqual(result, 0)
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: ["test_arm", "test_change_mode", "test_takeoff"]
+        test: ["test_arm", "test_change_mode", "test_takeoff", "test_set_speed", "test_set_yaw"]
 
     steps:
     - uses: actions/checkout@v2
