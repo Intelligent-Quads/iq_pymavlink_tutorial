@@ -1,6 +1,7 @@
 import sys
 import time
 import unittest
+import os
 from pymavlink import mavutil
 
 # Add the parent directory to the system path
@@ -11,6 +12,8 @@ from sitl_simulator import SITLSimulator
 from change_mode import connect_to_sysid, change_mode  
 from takeoff import takeoff
 from speed_yaw import set_speed, set_yaw
+from upload_waypoints import upload_qgc_mission, read_qgc_mission
+
 
 class TestAll(unittest.TestCase):
     def setUp(self):
@@ -24,6 +27,7 @@ class TestAll(unittest.TestCase):
     def tearDown(self):
         print("Stopping simulator")
         self.simulator.stop()
+        self.mav_connection.close()
 
     def connect_to_sysid(self, connection_str : str, sysid : int, timeout: float = 3) -> any:
         """connect_to_sysid connects to a mavlink stream with a specific sysid
@@ -78,6 +82,13 @@ class TestAll(unittest.TestCase):
         # Use a yaw angle of 45 and a yaw rate of 25 for the test
         result = set_yaw(self.mav_connection, 45, 25)
         self.assertEqual(result, 0)
+
+    def test_upload_waypoints(self):
+        # Use CMAC_square.plan file for the test
+        mission_file = os.path.join(os.path.dirname(__file__), "..", "wps", "CMAC_square.plan")
+        mission = read_qgc_mission(mission_file)
+        result = upload_qgc_mission(mission, self.mav_connection)
+        self.assertTrue(result)
 
 if __name__ == "__main__":
     unittest.main()
