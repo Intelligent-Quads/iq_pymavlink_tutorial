@@ -41,26 +41,31 @@ def takeoff(mav_connection, takeoff_altitude):
     print("Heartbeat from system (system %u component %u)" %
           (mav_connection.target_system, mav_connection.target_component))
 
-    mode_id = mav_connection.mode_mapping()["GUIDED"]
+    mode_id = mav_connection.mode_mapping()["TAKEOFF"]
 
 
-    mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component, mavutil.mavlink.MAV_CMD_DO_SET_MODE,
+    mav_connection.mav.command_long_send(1, 1, mavutil.mavlink.MAV_CMD_DO_SET_MODE,
                                 0, mavutil.mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED, mode_id, 0, 0, 0, 0, 0)
     ack_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Change Mode ACK:  {ack_msg}")
 
-    mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
+    mav_connection.mav.command_long_send(1, 1,
                                          mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0, 1, 0, 0, 0, 0, 0, 0)
 
     arm_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Arm ACK:  {arm_msg}")
 
-    mav_connection.mav.command_long_send(mav_connection.target_system, mav_connection.target_component,
-                                         mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 0, 0, 0, takeoff_altitude)
+    mav_connection.mav.command_long_send(1, 1,
+                                         mavutil.mavlink.MAV_CMD_NAV_TAKEOFF, 0, -1.0, 0, 0, 0, float("NAN"), float("NAN"), 600)
 
     takeoff_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Takeoff ACK:  {takeoff_msg}")
 
+    mav_connection.mav.command_long_send(1, 1,
+                                         mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM, 0, 1, 0, 0, 0, 0, 0, 0)
+
+    arm_msg = mav_connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
+    print(f"Arm ACK:  {arm_msg}")
     return takeoff_msg.result
 
 def main():
