@@ -12,7 +12,8 @@ from sitl_simulator import SITLSimulator
 from change_mode import connect_to_sysid, change_mode  
 from takeoff import takeoff
 from speed_yaw import set_speed, set_yaw
-from upload_waypoints import upload_qgc_mission, read_qgc_mission
+from upload_waypoints import upload_qgc_mission
+from land import land
 
 
 class TestAll(unittest.TestCase):
@@ -86,9 +87,15 @@ class TestAll(unittest.TestCase):
     def test_upload_waypoints(self):
         # Use CMAC_square.plan file for the test
         mission_file = os.path.join(os.path.dirname(__file__), "..", "wps", "CMAC_square.plan")
-        mission = read_qgc_mission(mission_file)
-        result = upload_qgc_mission(mission, self.mav_connection)
+        result = upload_qgc_mission(mission_file, self.mav_connection)
         self.assertTrue(result)
+    
+    def test_land(self):
+        result = takeoff(self.mav_connection, 10)
+        self.assertEqual(result, 0)
+        time.sleep(10)
+        result = land(self.mav_connection)
+        self.assertEqual(result, 0)
 
 if __name__ == "__main__":
     unittest.main()
