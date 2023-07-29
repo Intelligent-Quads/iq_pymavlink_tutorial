@@ -51,13 +51,26 @@ class TestAll(unittest.TestCase):
 
 
     def test_arm(self):
+        # TODO make this rely on data that tells us when the PX4 vehicle is ready to accept this command
+        time.sleep(20)
+        
         result = arm(self.mav_connection, 1)
         self.assertEqual(result, 0)
 
     def test_change_mode(self):
-        # Use a mode of "GUIDED" for the test
-        result = change_mode(self.mav_connection, 'GUIDED')
-        
+        autopilot = os.getenv("IQ_SIM_AUTOPILOT", "ardupilot")
+        if autopilot == "ardupilot":            
+            # Use a mode of "GUIDED" for the test
+            result = change_mode(self.mav_connection, 'GUIDED')
+
+        elif autopilot == "px4":
+            # TODO make this rely on data that tells us when the vehicle is ready to accept this command
+            time.sleep(20)
+            # Use a mode of "OFFBOARD" for the test
+            result = change_mode(self.mav_connection, "AUTO", "px4", "READY")
+        else:
+            raise Exception("Unsupported autopilot")
+
         # Check the mode of the simulated drone
         self.assertEqual(result, 0)
     

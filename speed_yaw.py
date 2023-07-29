@@ -29,7 +29,7 @@ def set_speed(connection, speed: float):
     connection.mav.command_long_send(
         connection.target_system,
         connection.target_component,
-        mavutil.mavlink.MAV_CMD_DO_CHANGE_SPEED,0,0,speed,0,0,0,0,0,)
+        mavutil.mavlink.MAV_CMD_DO_CHANGE_SPEED,0,1,speed,0,0,0,0,0,)
 
     set_speed_ack = connection.recv_match(type='COMMAND_ACK', blocking=True, timeout=3)
     print(f"Set Speed ACK:  {set_speed_ack}")
@@ -62,8 +62,8 @@ if __name__ == "__main__":
         description="Set speed and yaw of a MAVLink client"
     )
     parser.add_argument("--connection", type=str, default="udpin:localhost:14551", help="The connection string to the MAVLink client")
-    parser.add_argument("--speed", type=float, default=5, help="The speed to set")
-    parser.add_argument("--yaw", type=float, help="The yaw angle to set")
+    parser.add_argument("--speed", type=float, default=None, help="The speed to set")
+    parser.add_argument("--yaw", type=float, default=None, help="The yaw angle to set")
     parser.add_argument("--yaw-rate", type=float, default=30, help="The yaw rate to set")
     parser.add_argument("--direction", type=int, choices=[-1, 1], default=-1, help="The direction to set. -1 for left, 1 for right.")
     parser.add_argument("--abs-rel-flag", type=int, choices=[0, 1], default=0, help="The absolute/relative flag to set. 0 for absolute, 1 for relative.")
