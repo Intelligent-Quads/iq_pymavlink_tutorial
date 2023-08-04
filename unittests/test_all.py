@@ -21,10 +21,15 @@ class TestAll(unittest.TestCase):
         print("Starting simulator")
         self.simulator = SITLSimulator()
         conn_str = self.simulator.start()
-        time.sleep(10)
-        self.mav_connection = self.connect_to_sysid(conn_str, 1)
-        self.mav_connection.mav.request_data_stream_send(self.mav_connection.target_system, self.mav_connection.target_component,
+        try:
+            self.mav_connection = self.connect_to_sysid(conn_str, 1, timeout=20)
+            self.mav_connection.mav.request_data_stream_send(self.mav_connection.target_system, self.mav_connection.target_component,
                                         mavutil.mavlink.MAV_DATA_STREAM_ALL, 4, 1)
+        except Exception as e:
+            print(e)
+            self.tearDown()
+            raise
+        
     def tearDown(self):
         print("Stopping simulator")
         self.simulator.stop()
@@ -41,13 +46,16 @@ class TestAll(unittest.TestCase):
         """    
         time_start = time.time()
         while time.time() - time_start < timeout:
-            the_connection = mavutil.mavlink_connection(connection_str, autoreconnect=True)
+            the_connection = mavutil.mavlink_connection(connection_str, autoreconnect=True, timeout=3)
             the_connection.wait_heartbeat()
             print(
                 f"Heartbeat from system system {the_connection.target_system} component {the_connection.target_component}")
             if the_connection.target_system == sysid:
                 print(f"Now connected to SYSID {sysid}")
                 return the_connection
+            else:
+                the_connection.close()
+        print("Failed to connect to SYSID {sysid}. timeout reached")
 
 
     def test_arm(self):

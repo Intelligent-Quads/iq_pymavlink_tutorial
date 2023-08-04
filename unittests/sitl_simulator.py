@@ -36,12 +36,13 @@ class SITLSimulator:
 
         self.sim_id = self.api.start_sim(sim_config)
         try:
-            self.api.wait_for_sim_ready(self.sim_id)
+            self.api.wait_for_sim_ready(self.sim_id, timeout=180)
             self.connection_info = self.api.get_connection(self.sim_id)
             print(self.connection_info)
             self.conn_str = f"tcp:{self.connection_info['ip']}:{self.connection_info['port']}"
             return self.conn_str
-        except:
+        except Exception as e:
+            print(e)
             self.api.stop_sim(self.sim_id)
             raise
 

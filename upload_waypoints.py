@@ -7,19 +7,19 @@ from utilities.connect_to_sysid import connect_to_sysid
 from utilities.get_autopilot_info import get_autopilot_info
 
 
-def upload_qgc_mission(mission_file: str, master: mavutil.mavlink_connection) -> Optional[bool]:
+def upload_qgc_mission(mission_file: str, the_connection: mavutil.mavlink_connection, sysid: int = 1) -> Optional[bool]:
     """
     Upload a mission to UAV.
 
     Args:
         mission_file (str): The path to the mission file.
-        master (mavutil.mavlink_connection): The MAVLink connection to use.
+        the_connection (mavutil.mavlink_connection): The MAVLink connection to use.
 
     Returns:
         bool: True if the mission is successfully uploaded, False otherwise.
         None: If the mission file couldn't be read.
     """
-    autopilot_info = get_autopilot_info(the_connection, 1)
+    autopilot_info = get_autopilot_info(the_connection, sysid)
     autopilot = autopilot_info["autopilot"]
     print(f"Autopilot: {autopilot}")
     
@@ -40,10 +40,10 @@ def upload_qgc_mission(mission_file: str, master: mavutil.mavlink_connection) ->
     # Add all waypoints from mission to MAVLink waypoint loader
     for wp in mission["mission"]["items"]:
         print(wp)
-        add_waypoint(wploader, master, wp, seq)
+        add_waypoint(wploader, the_connection, wp, seq)
         seq += 1  # Increase waypoint sequence for the next waypoint
     
-    return upload_mission(master, wploader)
+    return upload_mission(the_connection, wploader)
 
 def read_qgc_mission(mission_file: str) -> Dict:
     """
