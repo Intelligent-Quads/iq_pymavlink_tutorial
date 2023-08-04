@@ -1,2 +1,2 @@
 pymavlink==2.4.39
-python-iq-sim==0.0.3
+python-iq-sim==0.0.4
