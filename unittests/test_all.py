@@ -14,6 +14,7 @@ from takeoff import takeoff
 from speed_yaw import set_speed, set_yaw
 from upload_waypoints import upload_qgc_mission
 from land import land
+from utilities.get_autopilot_info import get_autopilot_info
 
 
 class TestAll(unittest.TestCase):
@@ -97,12 +98,13 @@ class TestAll(unittest.TestCase):
         self.assertEqual(result, 0)
 
     def test_set_yaw(self):
+        autopilot_info = get_autopilot_info(self.mav_connection, 1)
         result = takeoff(self.mav_connection, 10)
         self.assertEqual(result, 0)
         time.sleep(1)
 
         # Use a yaw angle of 45 and a yaw rate of 25 for the test
-        result = set_yaw(self.mav_connection, 45, 25)
+        result = set_yaw(self.mav_connection, 45, 25, autopilot=autopilot_info["autopilot"])
         self.assertEqual(result, 0)
 
     def test_upload_waypoints(self):
