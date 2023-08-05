@@ -75,7 +75,7 @@ class TestAll(unittest.TestCase):
             # TODO make this rely on data that tells us when the vehicle is ready to accept this command
             time.sleep(20)
             # Use a mode of "OFFBOARD" for the test
-            result = change_mode(self.mav_connection, "AUTO", "px4", "READY")
+            result = change_mode(self.mav_connection, "POSCTL", "px4", "READY")
         else:
             raise Exception("Unsupported autopilot")
 
