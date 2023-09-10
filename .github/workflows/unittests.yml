@@ -1,0 +1,33 @@
+name: Run Unittests
+
+on: [pull_request]
+
+jobs:
+  test:
+    environment: iq_sim_vars
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        autopilot: ["ardupilot", "px4"]
+        test: ["test_arm", "test_change_mode", "test_takeoff", "test_set_speed", "test_set_yaw", "test_upload_waypoints"]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run test
+      run: python -m unittest test_all.TestAll.${{ matrix.test }}
+      working-directory: unittests
+      env:
+        IQ_SIM_TOKEN: ${{ secrets.IQ_SIM_TOKEN }}
+        IQ_SIM_AUTOPILOT: ${{ matrix.autopilot }}
