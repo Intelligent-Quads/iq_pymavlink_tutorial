@@ -9,6 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        autopilot: ["ardupilot", "px4"]
         test: ["test_arm", "test_change_mode", "test_takeoff", "test_set_speed", "test_set_yaw", "test_upload_waypoints"]
 
     steps:
@@ -29,3 +30,4 @@ jobs:
       working-directory: unittests
       env:
         IQ_SIM_TOKEN: ${{ secrets.IQ_SIM_TOKEN }}
+        IQ_SIM_AUTOPILOT: ${{ matrix.autopilot }}
